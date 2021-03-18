@@ -12,8 +12,8 @@ const main = async () => {
   //   desc: "hello this is the desc",
   // });
   // await orm.em.persist(post).flush();
-  const posts = await orm.em.find(Post, {});
-  console.log(posts);
+  // const posts = await orm.em.find(Post, {});
+  // console.log(posts);
 };
 main().catch((err) => {
   console.log("The error is :" + err);
