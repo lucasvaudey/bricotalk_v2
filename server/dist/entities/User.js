@@ -9,10 +9,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Post = void 0;
+exports.Users = void 0;
 const core_1 = require("@mikro-orm/core");
 const type_graphql_1 = require("type-graphql");
-let Post = class Post {
+let Users = class Users {
     constructor() {
         this.createdAt = new Date();
         this.updatedAt = new Date();
@@ -22,30 +22,29 @@ __decorate([
     type_graphql_1.Field(() => type_graphql_1.Int),
     core_1.PrimaryKey(),
     __metadata("design:type", Number)
-], Post.prototype, "id", void 0);
+], Users.prototype, "id", void 0);
 __decorate([
     type_graphql_1.Field(() => String),
     core_1.Property({ type: "date" }),
     __metadata("design:type", Object)
-], Post.prototype, "createdAt", void 0);
+], Users.prototype, "createdAt", void 0);
 __decorate([
     type_graphql_1.Field(() => String),
     core_1.Property({ type: "date", onUpdate: () => new Date() }),
     __metadata("design:type", Object)
-], Post.prototype, "updatedAt", void 0);
+], Users.prototype, "updatedAt", void 0);
 __decorate([
     type_graphql_1.Field(() => String),
-    core_1.Property({ type: "text" }),
+    core_1.Property({ type: "text", unique: true }),
     __metadata("design:type", String)
-], Post.prototype, "title", void 0);
+], Users.prototype, "username", void 0);
 __decorate([
-    type_graphql_1.Field(() => String),
     core_1.Property({ type: "text" }),
     __metadata("design:type", String)
-], Post.prototype, "desc", void 0);
-Post = __decorate([
+], Users.prototype, "password", void 0);
+Users = __decorate([
     type_graphql_1.ObjectType(),
     core_1.Entity()
-], Post);
-exports.Post = Post;
-//# sourceMappingURL=Post.js.map
+], Users);
+exports.Users = Users;
+//# sourceMappingURL=User.js.map
