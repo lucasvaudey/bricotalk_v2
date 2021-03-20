@@ -8,20 +8,45 @@ import microConfig from "./mikro-orm.config";
 import { HelloResolver } from "./resolvers/hello";
 import { PostResolver } from "./resolvers/posts";
 import { UsersResolver } from "./resolvers/users";
+import connectRedis from "connect-redis";
+import session from "express-session";
+import redis from "redis";
+
 const main = async () => {
   const orm = await MikroORM.init(microConfig);
+  //Les migrations créer à travers le CLI doivent obligatoirement être up grace au CLI
+  //Le migrator up est seulement la pour push les migrations sur la base de donnés
   orm.getMigrator().up();
-  //seems to not working properly
-  //we need to generate our migrator and upping only through CLI
-  //or using code to create a migrations each time we run the server
   const app = express();
+  const RedisStore = connectRedis(session);
+  const redisClient = redis.createClient();
+
+  app.use(
+    session({
+      name: "qid",
+      store: new RedisStore({
+        client: redisClient,
+        disableTouch: true,
+      }),
+      cookie: {
+        maxAge: 1000 * 365 * 24 * 60 * 60 * 10, //10 an
+        httpOnly: true,
+        sameSite: "lax", //csrf
+        secure: __prod__,
+      },
+      //TODO: change to env variable
+      secret: "djkfhjskadhfjksfjkad",
+      saveUninitialized: false,
+      resave: false,
+    })
+  );
+
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
-      //TODO: 1:09:30
       resolvers: [HelloResolver, PostResolver, UsersResolver],
       validate: false,
     }),
-    context: () => ({ em: orm.em }),
+    context: ({ req, res }) => ({ em: orm.em, req, res }),
   });
 
   apolloServer.applyMiddleware({ app });
@@ -30,6 +55,7 @@ const main = async () => {
     console.log("server started on localhost:4000");
   });
 };
+
 main().catch((err) => {
   console.log("The error is :" + err);
 });

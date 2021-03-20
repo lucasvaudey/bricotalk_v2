@@ -68,7 +68,16 @@ UserResponse = __decorate([
     type_graphql_1.ObjectType()
 ], UserResponse);
 let UsersResolver = class UsersResolver {
-    register({ em }, options) {
+    me({ req, em }) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!req.session.userId) {
+                return null;
+            }
+            const user = yield em.findOne(Users_1.Users, { id: req.session.userId });
+            return user;
+        });
+    }
+    register({ em, req }, options) {
         return __awaiter(this, void 0, void 0, function* () {
             const usertest = yield em.findOne(Users_1.Users, { username: options.username });
             if (usertest) {
@@ -107,10 +116,11 @@ let UsersResolver = class UsersResolver {
                 password: hashedPassword,
             });
             yield em.persistAndFlush(user);
+            req.session.userId = user.id;
             return { user };
         });
     }
-    login({ em }, options) {
+    login({ em, req }, options) {
         return __awaiter(this, void 0, void 0, function* () {
             const user = yield em.findOne(Users_1.Users, {
                 username: options.username.toLowerCase(),
@@ -136,12 +146,20 @@ let UsersResolver = class UsersResolver {
                     ],
                 };
             }
+            req.session.userId = user.id;
             return {
                 user,
             };
         });
     }
 };
+__decorate([
+    type_graphql_1.Query(() => Users_1.Users, { nullable: true }),
+    __param(0, type_graphql_1.Ctx()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], UsersResolver.prototype, "me", null);
 __decorate([
     type_graphql_1.Mutation(() => UserResponse),
     __param(0, type_graphql_1.Ctx()),
