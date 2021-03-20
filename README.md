@@ -6,11 +6,12 @@
 <li>Postgres</li>
 <li>React</li>
 <li>GraphQL</li>
-<li>URQL</li>
+<li>Apollo</li>
 <li>Node.js</li>
-<li>TypeORM</li>
+<li>mikro-ORM</li>
 <li>Redis</li>
 <li>Next.js</li>
+<li>Chakra</li>
 <li>TypeGraphQl</li>
 <li>TypeScript</li>
 </ul>
