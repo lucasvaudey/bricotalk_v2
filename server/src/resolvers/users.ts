@@ -75,7 +75,7 @@ export class UsersResolver {
         ],
       };
     }
-    if (options.password.length <= 3) {
+    if (options.password.length < 3) {
       return {
         errors: [
           {
