@@ -6,7 +6,7 @@
 <li>Postgres</li>
 <li>React</li>
 <li>GraphQL</li>
-<li>Apollo</li>
+<li>Apollo/URQL</li>
 <li>Node.js</li>
 <li>mikro-ORM</li>
 <li>Redis</li>
