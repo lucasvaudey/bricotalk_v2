@@ -14,7 +14,7 @@ export const Register: React.FC<registerProps> = () => {
   const [, register] = useRegisterMutation();
   return (
     <Formik
-      initialValues={{ username: "", password: "" }}
+      initialValues={{ username: "", password: "", email: "" }}
       onSubmit={async (values, { setErrors }) => {
         const response = await register(values);
         if (response.data?.register.errors) {
@@ -28,6 +28,7 @@ export const Register: React.FC<registerProps> = () => {
       {({ isSubmitting }) => (
         <Form>
           <InputField name="username" placeholder="Username" label="Username" />
+          <InputField name="email" placeholder="Email" label="Email" />
           <InputField
             type="password"
             name="password"

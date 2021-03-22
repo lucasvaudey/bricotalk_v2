@@ -15,7 +15,7 @@ export const Login: React.FC<loginProps> = () => {
   const [, login] = useLoginMutation();
   return (
     <Formik
-      initialValues={{ username: "", password: "" }}
+      initialValues={{ usernameOrEmail: "", password: "" }}
       onSubmit={async (values, { setErrors }) => {
         const response = await login(values);
         if (response.data?.login.errors) {
@@ -28,7 +28,11 @@ export const Login: React.FC<loginProps> = () => {
     >
       {({ isSubmitting }) => (
         <Form>
-          <InputField name="username" placeholder="Username" label="Username" />
+          <InputField
+            name="usernameOrEmail"
+            placeholder="Username/Email"
+            label="Username/Email"
+          />
           <InputField
             type="password"
             name="password"

@@ -14,10 +14,11 @@ import redis from "redis";
 import cors from "cors";
 
 const main = async () => {
+  // sendEmail("bob@bob.com", "hello there");
   const orm = await MikroORM.init(microConfig);
   //Les migrations créer à travers le CLI doivent obligatoirement être up grace au CLI
   //Le migrator up est seulement la pour push les migrations sur la base de donnés
-  orm.getMigrator().up();
+  await orm.getMigrator().up();
   const app = express();
   const RedisStore = connectRedis(session);
   const redisClient = redis.createClient();

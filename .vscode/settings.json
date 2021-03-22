@@ -1,3 +1,6 @@
 {
-    "editor.fontFamily": "'SF Mono','Droid Sans Mono', 'monospace', monospace, 'Droid Sans Fallback'"
+    "editor.fontFamily": "'SF Mono','Droid Sans Mono', 'monospace', monospace, 'Droid Sans Fallback'",
+    "editor.fontSize": 20,
+    "terminal.integrated.cursorStyle": "line",
+    "terminal.integrated.fontSize": 18
 }
