@@ -24,6 +24,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.PostResolver = void 0;
 const Post_1 = require("../entities/Post");
 const type_graphql_1 = require("type-graphql");
+const isAuth_1 = require("../middleware/isAuth");
 let PostResolver = class PostResolver {
     posts({}) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -33,9 +34,9 @@ let PostResolver = class PostResolver {
     post(id) {
         return Post_1.Post.findOne(id);
     }
-    createPost(title, desc) {
+    createPost(title, desc, { req }) {
         return __awaiter(this, void 0, void 0, function* () {
-            return Post_1.Post.create({ title, desc }).save();
+            return Post_1.Post.create({ title, desc, creatorId: req.session.userId }).save();
         });
     }
     updatePost(_title, _desc, _id) {
@@ -82,10 +83,12 @@ __decorate([
 ], PostResolver.prototype, "post", null);
 __decorate([
     type_graphql_1.Mutation(() => Post_1.Post),
+    type_graphql_1.UseMiddleware(isAuth_1.isAuth),
     __param(0, type_graphql_1.Arg("title")),
     __param(1, type_graphql_1.Arg("desc")),
+    __param(2, type_graphql_1.Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:paramtypes", [String, String, Object]),
     __metadata("design:returntype", Promise)
 ], PostResolver.prototype, "createPost", null);
 __decorate([
