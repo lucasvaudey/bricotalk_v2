@@ -163,12 +163,12 @@ let UsersResolver = class UsersResolver {
             const user = yield Users_1.Users.findOne(usernameOrEmail.includes("@")
                 ? { email: usernameOrEmail }
                 : { username: usernameOrEmail.toLowerCase() });
-            if (!user) {
+            if (user === undefined) {
                 return {
                     errors: [
                         {
-                            field: "username",
-                            message: "that username/email doesn't exit",
+                            field: "usernameOrEmail",
+                            message: "Cet utilisateur n'existe pas",
                         },
                     ],
                 };
@@ -179,7 +179,7 @@ let UsersResolver = class UsersResolver {
                     errors: [
                         {
                             field: "password",
-                            message: "incorrect password",
+                            message: "Mot de passe incorrect",
                         },
                     ],
                 };

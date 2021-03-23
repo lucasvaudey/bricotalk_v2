@@ -163,12 +163,12 @@ export class UsersResolver {
         ? { email: usernameOrEmail }
         : { username: usernameOrEmail.toLowerCase() }
     );
-    if (!user) {
+    if (user === undefined) {
       return {
         errors: [
           {
-            field: "username",
-            message: "that username/email doesn't exit",
+            field: "usernameOrEmail",
+            message: "Cet utilisateur n'existe pas",
           },
         ],
       };
@@ -179,7 +179,7 @@ export class UsersResolver {
         errors: [
           {
             field: "password",
-            message: "incorrect password",
+            message: "Mot de passe incorrect",
           },
         ],
       };

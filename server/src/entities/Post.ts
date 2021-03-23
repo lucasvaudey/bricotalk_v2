@@ -1,4 +1,3 @@
-import { UsersResolver } from "src/resolvers/users";
 import { Field, Int, ObjectType } from "type-graphql";
 import {
   BaseEntity,

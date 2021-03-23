@@ -3,7 +3,6 @@ import { MyContext } from "../types";
 import {
   Arg,
   Ctx,
-  InputType,
   Int,
   Mutation,
   Query,
