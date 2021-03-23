@@ -1,5 +1,6 @@
-import { Box, Button } from "@chakra-ui/react";
+import { Box, Button, Link } from "@chakra-ui/react";
 import { Form, Formik } from "formik";
+import NextLink from "next/link";
 import { NextPage } from "next";
 import { withUrqlClient } from "next-urql";
 import { useRouter } from "next/router";
@@ -28,6 +29,7 @@ const ChangePassword: NextPage<ChangePasswordProps> = ({ token }) => {
           });
           if (response.data?.changePassword.errors) {
             const errorMap = toErrorMap(response.data.changePassword.errors);
+            console.log(tokenError);
             if ("token" in errorMap) {
               setTokenError(errorMap.token);
             }
@@ -47,7 +49,14 @@ const ChangePassword: NextPage<ChangePasswordProps> = ({ token }) => {
             label="New Password"
             type="password"
           />
-          {tokenError ? <Box color="red"></Box> : null}
+          {tokenError ? (
+            <Box>
+              <NextLink href="/forgot-password">
+                <Link>Get a new one</Link>
+              </NextLink>
+              <Box color="red">{tokenError}</Box>
+            </Box>
+          ) : null}
           <Button isLoading={isSubmitting} type="submit">
             subimit
           </Button>
