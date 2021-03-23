@@ -10,46 +10,47 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Users = void 0;
-const core_1 = require("@mikro-orm/core");
 const type_graphql_1 = require("type-graphql");
-let Users = class Users {
+const typeorm_1 = require("typeorm");
+let Users = class Users extends typeorm_1.BaseEntity {
     constructor() {
+        super(...arguments);
         this.createdAt = new Date();
         this.updatedAt = new Date();
     }
 };
 __decorate([
     type_graphql_1.Field(() => type_graphql_1.Int),
-    core_1.PrimaryKey(),
+    typeorm_1.PrimaryGeneratedColumn(),
     __metadata("design:type", Number)
 ], Users.prototype, "id", void 0);
 __decorate([
     type_graphql_1.Field(() => String),
-    core_1.Property({ type: "date" }),
+    typeorm_1.CreateDateColumn(),
     __metadata("design:type", Object)
 ], Users.prototype, "createdAt", void 0);
 __decorate([
     type_graphql_1.Field(() => String),
-    core_1.Property({ type: "date", onUpdate: () => new Date() }),
+    typeorm_1.UpdateDateColumn(),
     __metadata("design:type", Object)
 ], Users.prototype, "updatedAt", void 0);
 __decorate([
     type_graphql_1.Field(() => String),
-    core_1.Property({ type: "text", unique: true }),
+    typeorm_1.Column({ unique: true }),
     __metadata("design:type", String)
 ], Users.prototype, "username", void 0);
 __decorate([
     type_graphql_1.Field(() => String),
-    core_1.Property({ type: "text", unique: true }),
+    typeorm_1.Column({ unique: true }),
     __metadata("design:type", String)
 ], Users.prototype, "email", void 0);
 __decorate([
-    core_1.Property({ type: "text" }),
+    typeorm_1.Column({ type: "text" }),
     __metadata("design:type", String)
 ], Users.prototype, "password", void 0);
 Users = __decorate([
     type_graphql_1.ObjectType(),
-    core_1.Entity()
+    typeorm_1.Entity()
 ], Users);
 exports.Users = Users;
 //# sourceMappingURL=Users.js.map

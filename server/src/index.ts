@@ -1,10 +1,8 @@
 import "reflect-metadata";
-import { MikroORM } from "@mikro-orm/core";
 import { ApolloServer } from "apollo-server-express";
 import express from "express";
 import { buildSchema } from "type-graphql";
 import { COOKIE_NAME, __prod__ } from "./constants";
-import microConfig from "./mikro-orm.config";
 import { HelloResolver } from "./resolvers/hello";
 import { PostResolver } from "./resolvers/posts";
 import { UsersResolver } from "./resolvers/users";
@@ -12,13 +10,19 @@ import connectRedis from "connect-redis";
 import session from "express-session";
 import Redis from "ioredis";
 import cors from "cors";
+import { createConnection } from "typeorm";
+import { Users } from "./entities/Users";
+import { Post } from "./entities/Post";
 
 const main = async () => {
-  // sendEmail("bob@bob.com", "hello there");
-  const orm = await MikroORM.init(microConfig);
-  //Les migrations créer à travers le CLI doivent obligatoirement être up grace au CLI
-  //Le migrator up est seulement la pour push les migrations sur la base de donnés
-  await orm.getMigrator().up();
+  const conn = await createConnection({
+    type: "postgres",
+    database: "bricotalk",
+    username: "lucas",
+    logging: true,
+    synchronize: true, //auto-migration
+    entities: [Users, Post],
+  });
   const app = express();
   const RedisStore = connectRedis(session);
   const redis = new Redis();
@@ -53,7 +57,7 @@ const main = async () => {
       resolvers: [HelloResolver, PostResolver, UsersResolver],
       validate: false,
     }),
-    context: ({ req, res }) => ({ em: orm.em, req, res, redis }),
+    context: ({ req, res }) => ({ req, res, redis }),
   });
 
   apolloServer.applyMiddleware({

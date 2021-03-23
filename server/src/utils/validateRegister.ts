@@ -3,8 +3,8 @@ import { Users } from "../entities/Users";
 
 export const validateRegister = async (
   options: UsernamePasswordInput,
-  usertest: Users | null,
-  emailtest: Users | null
+  usertest: Users | undefined,
+  emailtest: Users | undefined
 ) => {
   if (emailtest) {
     return [

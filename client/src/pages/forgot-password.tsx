@@ -2,19 +2,16 @@ import { Box, Button, Link } from "@chakra-ui/react";
 import { Form, Formik } from "formik";
 import { withUrqlClient } from "next-urql";
 import NextLink from "next/link";
-import router from "next/router";
 import React, { useState } from "react";
 import { InputField } from "../components/InputField";
 import { useForgotPasswordMutation } from "../generated/graphql";
 import { createUrqlCLient } from "../utils/createUrqlClient";
-import { toErrorMap } from "../utils/toErrorMap";
-import login from "./login";
 
 interface forgotPasswordProps {}
 
 const forgotPassword: React.FC<forgotPasswordProps> = () => {
   const [, resetPassword] = useForgotPasswordMutation();
-  const [done, setDone] = useState(Boolean);
+  const [done, setDone] = useState(false);
   return (
     <Formik
       initialValues={{ email: "" }}
@@ -27,25 +24,33 @@ const forgotPassword: React.FC<forgotPasswordProps> = () => {
         }
       }}
     >
-      {({ isSubmitting }) => (
-        <Form>
-          <InputField name="email" placeholder="Email" label="Email" />
-          <Button isLoading={isSubmitting} type="submit">
-            subimit
-          </Button>
-          <Box>
-            <NextLink href="/login">
-              <Link>Retour au Login</Link>
-            </NextLink>
-          </Box>
-          {done ? (
+      {({ isSubmitting }) =>
+        done ? (
+          <>
             <Box>
               Si l'adresse email existe, un email de réinitialisation de mot de
               passe à été envoyé
             </Box>
-          ) : null}
-        </Form>
-      )}
+            <Box>
+              <NextLink href="/login">
+                <Link>Retour au Login</Link>
+              </NextLink>
+            </Box>
+          </>
+        ) : (
+          <Form>
+            <InputField name="email" placeholder="Email" label="Email" />
+            <Button isLoading={isSubmitting} type="submit">
+              subimit
+            </Button>
+            <Box>
+              <NextLink href="/login">
+                <Link>Retour au Login</Link>
+              </NextLink>
+            </Box>
+          </Form>
+        )
+      }
     </Formik>
   );
 };

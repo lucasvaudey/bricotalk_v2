@@ -25,13 +25,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UsersResolver = exports.UsernamePasswordInput = void 0;
-const Users_1 = require("../entities/Users");
-const type_graphql_1 = require("type-graphql");
 const argon2_1 = __importDefault(require("argon2"));
-const constants_1 = require("../constants");
-const validateRegister_1 = require("../utils/validateRegister");
-const sendEmail_1 = require("../utils/sendEmail");
+const type_graphql_1 = require("type-graphql");
 const uuid_1 = require("uuid");
+const constants_1 = require("../constants");
+const Users_1 = require("../entities/Users");
+const sendEmail_1 = require("../utils/sendEmail");
+const validateRegister_1 = require("../utils/validateRegister");
 let UsernamePasswordInput = class UsernamePasswordInput {
 };
 __decorate([
@@ -77,7 +77,7 @@ UserResponse = __decorate([
     type_graphql_1.ObjectType()
 ], UserResponse);
 let UsersResolver = class UsersResolver {
-    changePassword(token, newPassword, { em, req, redis }) {
+    changePassword(token, newPassword, { req, redis }) {
         return __awaiter(this, void 0, void 0, function* () {
             if (newPassword.length <= 2) {
                 return {
@@ -101,7 +101,8 @@ let UsersResolver = class UsersResolver {
                     ],
                 };
             }
-            const user = yield em.findOne(Users_1.Users, { id: parseInt(userId) });
+            const userIdInt = parseInt(userId);
+            const user = yield Users_1.Users.findOne(userIdInt);
             if (!user) {
                 return {
                     errors: [
@@ -112,56 +113,54 @@ let UsersResolver = class UsersResolver {
                     ],
                 };
             }
-            user.password = yield argon2_1.default.hash(newPassword);
-            yield em.persistAndFlush(user);
+            const hashedPassword = yield argon2_1.default.hash(newPassword);
+            Users_1.Users.update({ id: userIdInt }, { password: hashedPassword });
             req.session.userId = user.id;
             yield redis.del(key);
             return { user };
         });
     }
-    forgotPassword(email, { em, redis }) {
+    forgotPassword(_email, { redis }) {
         return __awaiter(this, void 0, void 0, function* () {
-            const user = yield em.findOne(Users_1.Users, { email });
+            const user = yield Users_1.Users.findOne({ email: _email });
             if (!user) {
                 return true;
             }
             const token = uuid_1.v4();
             yield redis.set(constants_1.FORGET_PASSWORD_PREFIX + token, user.id, "ex", 1000 * 60 * 60 * 24 * 3);
-            yield sendEmail_1.sendEmail(email, `<a href="http://localhost:3000/change-password/${token}">reset password</a>`);
+            yield sendEmail_1.sendEmail(_email, `<a href="http://localhost:3000/change-password/${token}">reset password</a>`);
             return true;
         });
     }
-    me({ req, em }) {
+    me({ req }) {
         return __awaiter(this, void 0, void 0, function* () {
             if (!req.session.userId) {
                 return null;
             }
-            const user = yield em.findOne(Users_1.Users, { id: req.session.userId });
-            return user;
+            return yield Users_1.Users.findOne(req.session.userId);
         });
     }
-    register({ em, req }, options) {
+    register({ req }, options) {
         return __awaiter(this, void 0, void 0, function* () {
-            const usertest = yield em.findOne(Users_1.Users, { username: options.username });
-            const emailtest = yield em.findOne(Users_1.Users, { email: options.email });
+            const usertest = yield Users_1.Users.findOne({ username: options.username });
+            const emailtest = yield Users_1.Users.findOne({ email: options.email });
             const errors = yield validateRegister_1.validateRegister(options, usertest, emailtest);
             if (errors) {
                 return { errors };
             }
             const hashedPassword = yield argon2_1.default.hash(options.password);
-            const user = em.create(Users_1.Users, {
+            const user = yield Users_1.Users.create({
                 username: options.username,
                 password: hashedPassword,
                 email: options.email,
-            });
-            yield em.persistAndFlush(user);
+            }).save();
             req.session.userId = user.id;
             return { user };
         });
     }
-    login({ em, req }, usernameOrEmail, password) {
+    login({ req }, usernameOrEmail, password) {
         return __awaiter(this, void 0, void 0, function* () {
-            const user = yield em.findOne(Users_1.Users, usernameOrEmail.includes("@")
+            const user = yield Users_1.Users.findOne(usernameOrEmail.includes("@")
                 ? { email: usernameOrEmail }
                 : { username: usernameOrEmail.toLowerCase() });
             if (!user) {
