@@ -1,4 +1,5 @@
 import { Button } from "@chakra-ui/button";
+import { FormControl, FormLabel } from "@chakra-ui/form-control";
 import { Textarea } from "@chakra-ui/textarea";
 import { Form, Formik } from "formik";
 import { withUrqlClient } from "next-urql";
@@ -23,18 +24,20 @@ const CreatePost: React.FC = () => {
           onSubmit={async (values, { setErrors }) => {
             if (values.title == "") {
               setErrors({ title: "Le titre ne doit pas être vide" });
-            }
-            if (values.desc == "") {
+            } else if (values.desc == "") {
               setErrors({ desc: "La description ne doit pas être vide" });
+            } else {
+              console.log("test");
+              await createPost({ title: values.title, desc: values.desc });
+              router.push("/");
             }
-            await createPost({ title: values.title, desc: values.desc });
-            router.push("/");
           }}
         >
           {({ isSubmitting }) => (
             <Form>
               <InputField label="Titre" name="title" placeholder="Titre" />
-              <Textarea
+              <InputField
+                textarea={true}
                 label="Description"
                 name="desc"
                 placeholder="Description"

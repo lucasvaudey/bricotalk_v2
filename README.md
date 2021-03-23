@@ -8,7 +8,7 @@
 <li>GraphQL</li>
 <li>Apollo/URQL</li>
 <li>Node.js</li>
-<li>mikro-ORM</li>
+<li>TypeORM</li>
 <li>Redis</li>
 <li>Next.js</li>
 <li>Chakra</li>
