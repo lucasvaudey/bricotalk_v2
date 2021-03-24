@@ -10,12 +10,26 @@ import {
   UseMiddleware,
 } from "type-graphql";
 import { isAuth } from "../middleware/isAuth";
+import { getConnection } from "typeorm";
 
 @Resolver()
 export class PostResolver {
   @Query(() => [Post])
-  async posts(@Ctx() {}: MyContext) {
-    return Post.find();
+  async posts(
+    @Arg("limit", () => Int) limit: number,
+    @Arg("cursor", () => String, { nullable: true }) cursor: string,
+    @Ctx() {}: MyContext
+  ) {
+    const realLimit = Math.min(50, limit);
+    const qb = getConnection()
+      .getRepository(Post)
+      .createQueryBuilder("p")
+      .orderBy('"createdAt"', "DESC")
+      .take(realLimit);
+    if (cursor) {
+      qb.where('"createdAt" < :cursor', { cursor: new Date(parseInt(cursor)) });
+    }
+    return qb.getMany();
   }
 
   @Query(() => Post, { nullable: true })
